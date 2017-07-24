@@ -107,6 +107,7 @@
 #ifndef _ZMQCPP_H_
 #define _ZMQCPP_H_
 
+#define ZMQ_STATIC 1
 #include <iostream>
 #include <sstream>
 #include <cstring>
