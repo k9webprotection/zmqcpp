@@ -108,6 +108,9 @@
 #define _ZMQCPP_H_
 
 #define ZMQ_STATIC 1
+#ifdef _WIN32
+    #pragma warning (disable:4458)
+#endif
 #include <iostream>
 #include <sstream>
 #include <cstring>
@@ -130,8 +133,6 @@ typedef unsigned __int32 uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 
-#pragma warning( push )
-#pragma warning( disable: 4996 4800 )
 #endif
 
 namespace zmqcpp {
@@ -869,9 +870,5 @@ private:
 
 
 } // zmqcpp
-
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif
 
 #endif // _ZMQCPP_H_
