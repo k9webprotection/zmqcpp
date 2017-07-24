@@ -111,6 +111,8 @@
 #ifdef _WIN32
     #pragma warning (disable:4458)
 #endif
+#include <zmq.h>
+
 #include <iostream>
 #include <sstream>
 #include <cstring>
