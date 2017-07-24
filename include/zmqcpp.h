@@ -184,7 +184,9 @@ enum SocketOption {
 enum PollOption {
   pollin = ZMQ_POLLIN,
   pollout = ZMQ_POLLOUT,
-  pollerror = ZMQ_POLLERR
+  pollerror = ZMQ_POLLERR,
+  pollinout = ZMQ_POLLIN|ZMQ_POLLOUT
+// ----
 };
 
 
