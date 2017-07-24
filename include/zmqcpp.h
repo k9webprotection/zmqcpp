@@ -285,7 +285,7 @@ public:
   }
 
   uint32_t size() const {
-    return parts.size();
+    return static_cast<uint32_t>(parts.size());
   }
 
   const_iterator begin() const {
@@ -325,6 +325,7 @@ public:
   }
 
   void assign(const Message& msg, bool copy = true) {
+    (void)copy; // unused
     clear();
     if (msg.size() > 0) {
         assign(msg.begin(), msg.end());
@@ -522,7 +523,8 @@ public:
   }
 
   static MessageBuffer message_buffer(const zmq_msg_t& msg) {
-    return MessageBuffer(zmq_msg_data(const_cast<zmq_msg_t*>(&msg)), zmq_msg_size(const_cast<zmq_msg_t*>(&msg)));
+    return MessageBuffer(zmq_msg_data(const_cast<zmq_msg_t*>(&msg)),
+                         static_cast<uint32_t>(zmq_msg_size(const_cast<zmq_msg_t*>(&msg))));
   }
 
   static bool message_empty(const zmq_msg_t& msg) {
@@ -813,12 +815,12 @@ public:
 #define VECTOR_DATA(v) (v.size() > 0 ? &v[0] : 0)
 
   bool poll() {
-    bool poll_socket = zmq_poll(VECTOR_DATA(items), items.size(), -1) > 0;
+    bool poll_socket = zmq_poll(VECTOR_DATA(items), static_cast<int>(items.size()), -1) > 0;
     return poll_socket ? dispatch() : false;
   }
 
   bool poll(uint32_t timeout) {
-    bool poll_socket = zmq_poll(VECTOR_DATA(items), items.size(), timeout) > 0;
+    bool poll_socket = zmq_poll(VECTOR_DATA(items), static_cast<int>(items.size()), timeout) > 0;
     return poll_socket ? dispatch() : false;
   }
 
@@ -839,7 +841,7 @@ public:
     if (poll_item == items.end() || socket.socket < poll_item->socket) {
       return false;
     }
-    return poll_item->revents & poll_item->events;
+    return ((poll_item->revents & poll_item->events) > 0);
   }
 
 private:
