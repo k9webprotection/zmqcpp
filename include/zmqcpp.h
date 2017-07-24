@@ -548,6 +548,10 @@ public:
       term();
     }
   }
+  
+  bool valid() const {
+    return (context != NULL);
+  }
 
   void init(uint32_t threads = 1, bool auto_term = true) {
     int32_t major, minor, patch;
@@ -812,6 +816,15 @@ public:
     callbacks.erase(socket.socket);
   }
 
+  bool change_option(const Socket& socket, PollOption option) {
+    zmq_pollitem_t item = {socket.socket, 0, 0, 0};
+    PollItems::iterator poll_item = std::lower_bound(items.begin(), items.end(), item, less_than_socket());
+    if (poll_item == items.end() || socket.socket < poll_item->socket)
+      return false;
+    poll_item->events = (short)option;
+    return true;
+  }
+  
 #define VECTOR_DATA(v) (v.size() > 0 ? &v[0] : 0)
 
   bool poll() {
@@ -842,6 +855,15 @@ public:
       return false;
     }
     return ((poll_item->revents & poll_item->events) > 0);
+  }
+
+  bool has_polled(const Socket& socket, PollOption option) const {
+    zmq_pollitem_t item = {socket.socket, 0, 0, 0};
+    PollItems::const_iterator poll_item = std::lower_bound(items.begin(), items.end(), item, less_than_socket());
+    if (poll_item == items.end() || socket.socket < poll_item->socket) {
+      return false;
+    }
+    return (poll_item->revents & option) != 0;
   }
 
 private:
